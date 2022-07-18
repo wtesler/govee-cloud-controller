@@ -16,4 +16,4 @@ with your own project id.
 
 ## Dependencies
 
-Project uses `cranny` structure where `.rest.js` files are exported as cloud functions.
+Project uses `cranny` syntax where `.rest.js` files are exported as cloud functions.

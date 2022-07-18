@@ -8,8 +8,9 @@ module.exports = async () => {
   const START_MINUTES = 1200; // 3 PM CST
   const END_MINUTES = 1260; // 4 PM CST
 
+  const WHITE = 0xFFFFFF;
   // const RED = 0xFF0000;
-  const GREEN = 0x00FF00;
+  // const GREEN = 0x00FF00;
   const BLUE = 0x0000FF;
 
   // Get number of minutes since midnight. Note Cloud Functions are in EST!
@@ -35,8 +36,8 @@ module.exports = async () => {
   let t = (minutes - START_MINUTES) / (END_MINUTES - START_MINUTES);
   t = Math.pow(t, 3);
 
-  const dimMultiplier = lerp(0, 1, t);
-  const color = toColorObject(lerpColor(GREEN, BLUE, t));
+  const dimMultiplier = lerp(0, 0.9, t);
+  const color = toColorObject(lerpColor(WHITE, BLUE, t));
   dim(color, dimMultiplier);
 
   await goveeClient.controlDevice({name: 'color', value: color});
