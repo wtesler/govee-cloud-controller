@@ -1,7 +1,7 @@
 {
-  "name": "catlight",
+  "name": "govee-cloud-controller",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cloud functions which issue requests to a Govee light",
   "scripts": {
     "lint": "eslint .",
     "emulate": "firebase emulators:start --only functions",
