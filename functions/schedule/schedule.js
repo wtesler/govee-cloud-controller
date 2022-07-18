@@ -33,7 +33,7 @@ module.exports = async () => {
   }
 
   let t = (minutes - START_MINUTES) / (END_MINUTES - START_MINUTES);
-  t = Math.pow(t, 2);
+  t = Math.pow(t, 3);
 
   const dimMultiplier = lerp(0, 1, t);
   const color = toColorObject(lerpColor(GREEN, BLUE, t));
