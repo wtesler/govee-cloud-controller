@@ -1,30 +1,34 @@
 module.exports = async () => {
   const goveeClient = require('../govee/GoveeClient');
-  const lerpColor = require('../lerp/lerpColor');
   const lerp = require('../lerp/lerp');
   const toColorObject = require('../color/toColorObject');
-  const dim = require('../color/dim');
+  const saturate = require('../color/saturate');
+  const lighten = require('../color/lighten');
 
-  const WHITE = 0xFF0000;
-  // const RED = 0xFF0000;
-  // const GREEN = 0x00FF00;
-  const BLUE = 0x0000FF;
+  const BLUE = toColorObject(0x0000FF);
+  const OFF = toColorObject(0x0);
 
   const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-  for (let i = 0; i < 3; i++) {
-    const t = i / 2;
+  await goveeClient.controlDevice({name: 'brightness', value: 90});
 
-    const dimMultiplier = lerp(.1, 1, t);
-    const color = toColorObject(lerpColor(WHITE, BLUE, t));
-    dim(color, dimMultiplier);
+  const STEPS = 5;
+  for (let i = 0; i < STEPS; i++) {
+    let t = i / (STEPS - 1);
+    t = lerp(.1, 1, t);
+    // t = Math.pow(t, 3);
 
-    console.log(color);
+    let colorObj = lighten(BLUE, t);
+    colorObj = saturate(colorObj, t);
 
-    await goveeClient.controlDevice({name: 'color', value: color});
+    console.log(colorObj);
 
-    await sleep(2000);
+    await goveeClient.controlDevice({name: 'color', value: colorObj});
+
+    await sleep(3000);
   }
 
-  await goveeClient.controlDevice({name: 'color', value: toColorObject(0x0)});
+  await sleep(2000);
+
+  await goveeClient.controlDevice({name: 'color', value: toColorObject(OFF)});
 };

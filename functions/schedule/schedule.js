@@ -1,19 +1,16 @@
 module.exports = async () => {
   const goveeClient = require('../govee/GoveeClient');
-  const lerpColor = require('../lerp/lerpColor');
-  const lerp = require('../lerp/lerp');
   const toColorObject = require('../color/toColorObject');
-  const dim = require('../color/dim');
+  const saturate = require('../color/saturate');
+  const lighten = require('../color/lighten');
 
   const START_MINUTES = 1200; // 3 PM CST
   const END_MINUTES = 1260; // 4 PM CST
 
-  const WHITE = 0xFFFFFF;
-  // const RED = 0xFF0000;
-  // const GREEN = 0x00FF00;
-  const BLUE = 0x0000FF;
+  const BLUE = toColorObject(0x0000FF);
+  const OFF = toColorObject(0x0);
 
-  // Get number of minutes since midnight. Note Cloud Functions are in EST!
+  // Get number of minutes since midnight.
   const date = new Date();
   const now = new Date(date);
   const msSinceMidnight = now - date.setHours(0, 0, 0, 0);
@@ -28,17 +25,21 @@ module.exports = async () => {
     return;
   }
 
-  if (minutes === END_MINUTES) {
-    await goveeClient.controlDevice({name: 'color', value: toColorObject(0x0)});
-    return;
+  if (minutes === START_MINUTES) {
+    await goveeClient.controlDevice({name: 'brightness', value: 90});
   }
 
-  let t = (minutes - START_MINUTES) / (END_MINUTES - START_MINUTES);
-  t = Math.pow(t, 3);
+  let colorObj;
 
-  const dimMultiplier = lerp(0, 0.9, t);
-  const color = toColorObject(lerpColor(WHITE, BLUE, t));
-  dim(color, dimMultiplier);
+  if (minutes === END_MINUTES) {
+    colorObj = OFF;
+  } else {
+    let t = (minutes - START_MINUTES) / (END_MINUTES - START_MINUTES);
+    t = Math.pow(t, 3);
 
-  await goveeClient.controlDevice({name: 'color', value: color});
+    colorObj = lighten(BLUE, t);
+    colorObj = saturate(colorObj, t);
+  }
+
+  await goveeClient.controlDevice({name: 'color', value: colorObj});
 };

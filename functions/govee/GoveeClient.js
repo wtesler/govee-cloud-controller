@@ -68,9 +68,26 @@ class ServerClient {
       const data = [];
 
       const req = https.request(options, res => {
+        let isError = false;
+        if (res.statusCode !== 200) {
+          isError = true;
+        }
+
         res.on('data', chunk => data.push(chunk));
-        res.on('end', () => resolve(JSON.parse(Buffer.concat(data).toString())));
         res.on('error', e => reject(e));
+        res.on('end', () => {
+          try {
+            const resStr = Buffer.concat(data).toString();
+            if (isError) {
+              reject(new Error(resStr));
+            } else {
+              const response = JSON.parse(resStr);
+              resolve(response);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
       });
 
       if (type === 'POST' || type === 'PUT') {
