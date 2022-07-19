@@ -21,7 +21,8 @@
     "cors": "2.8.5",
     "cranny": "3.0.1",
     "firebase-functions": "3.22.0",
-    "google-cloud-report-error": "1.0.0"
+    "google-cloud-report-error": "1.0.0",
+    "https-client": "1.0.0"
   },
   "devDependencies": {
     "eslint": "8.19.0",
