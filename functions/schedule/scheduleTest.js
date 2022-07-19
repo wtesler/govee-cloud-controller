@@ -18,8 +18,7 @@ module.exports = async () => {
     t = lerp(.1, 1, t);
     // t = Math.pow(t, 3);
 
-    let colorObj = lighten(BLUE, t);
-    colorObj = saturate(colorObj, t);
+    const colorObj = saturate(lighten(BLUE, t), t);
 
     console.log(colorObj);
 

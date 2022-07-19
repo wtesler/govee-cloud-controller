@@ -21,7 +21,7 @@ module.exports = async () => {
     return;
   }
 
-  if (minutes > END_MINUTES) {
+  if (minutes >= END_MINUTES) {
     return;
   }
 
@@ -31,14 +31,13 @@ module.exports = async () => {
 
   let colorObj;
 
-  if (minutes === END_MINUTES) {
+  if (minutes === END_MINUTES - 1) {
     colorObj = OFF;
   } else {
     let t = (minutes - START_MINUTES) / (END_MINUTES - START_MINUTES);
     t = Math.pow(t, 3);
 
-    colorObj = lighten(BLUE, t);
-    colorObj = saturate(colorObj, t);
+    colorObj = saturate(lighten(BLUE, t), t);
   }
 
   await goveeClient.controlDevice({name: 'color', value: colorObj});
