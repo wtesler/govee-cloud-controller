@@ -1,24 +1,22 @@
 const config = require('./config.json');
-const HttpsClient = require('https-client');
+const {get, put} = require('https-client');
 
-class GoveeClient extends HttpsClient {
+class GoveeClient {
   constructor() {
-    super();
-
     this.HOST = 'developer-api.govee.com';
 
     this.DEVICES = '/v1/devices';
     this.CONTROL = '/v1/devices/control';
 
-    this.GET = 'GET';
-    this.PUT = 'PUT';
-
     this.HMAC = config.hmac;
     this.MODEL = config.model;
+    this.HEADER = {
+      'Govee-API-Key': config.key
+    };
   }
 
   async getDevices() {
-    return await this.call(this.GET, this.HOST, this.DEVICES, {}, this._createGoveeHeader());
+    return get(this.DEVICES, this.HOST, {}, this.HEADER);
   }
 
   async controlDevice(cmd) {
@@ -27,13 +25,7 @@ class GoveeClient extends HttpsClient {
       model: this.MODEL,
       cmd: cmd,
     };
-    return await this.call(this.PUT, this.HOST, this.CONTROL, body, this._createGoveeHeader());
-  }
-
-  _createGoveeHeader() {
-    return {
-      'Govee-API-Key': config.key
-    };
+    return put(this.CONTROL, this.HOST, body, this.HEADER);
   }
 }
 

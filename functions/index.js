@@ -1,6 +1,6 @@
 (async function () {
   const functions = require('firebase-functions');
-  const {discoverEndpoints} = require('cranny');
+  const {discoverEndpoints, rest} = require('cranny');
 
   const cors = require('cors')({
     origin: true
@@ -16,7 +16,7 @@
     const func = endpoint.obj;
     exports[name] = functions.region('us-central1').https.onRequest(async (req, res) => {
       cors(req, res, async () => {
-        await func(req, res);
+        await rest(func(req, res));
       });
     });
   }
